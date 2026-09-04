@@ -2,9 +2,18 @@ use bevy_ecs::resource::Resource;
 
 use crate::interner::Id;
 
+/// Responsible for holding a collection of statistics of a certain struct
+/// Projectiles, weapons, NPCs would each have their own registry corresponding to the struct that holds their stats
+/// Starts must be registered by the game by providing a struct as T
 #[derive(Resource)]
 pub struct Registry<T> {
     entries: Vec<Option<T>>
+}
+
+impl<T> Default for Registry<T> {
+    fn default() -> Self {
+        Self { entries: Vec::new() }
+    }
 }
 
 impl<T> Registry<T> {
@@ -27,14 +36,13 @@ impl<T> Registry<T> {
         Ok(())
     }
 
-    /// Registers definition by ID, overriding existing data if any
-    pub fn register_or_override(&mut self, id: Id<T>, def: T) {
+    /// Registers definition by ID - If ID already exists, overrides it and returns true
+    pub fn register_or_override(&mut self, id: Id<T>, def: T) -> bool {
         self.ensure_capacity(id);
         let slot = &mut self.entries[id.index as usize];
-        if slot.is_some() {
-            //warn!("Overriding existing definition: {}", def.id_str());
-        }
+        let overwritten = slot.is_some();
         *slot = Some(def);
+        overwritten
     }
 
     /// Return definition data corresponding to this ID, or None
