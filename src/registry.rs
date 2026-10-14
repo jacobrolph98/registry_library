@@ -1,10 +1,10 @@
 use bevy_ecs::resource::Resource;
 
-use crate::interner::Id;
+use crate::Id;
 
 /// Responsible for holding a collection of statistics of a certain struct
 /// Projectiles, weapons, NPCs would each have their own registry corresponding to the struct that holds their stats
-/// Starts must be registered by the game by providing a struct as T
+/// Stats must be registered by the game by providing a struct as T
 #[derive(Resource)]
 pub struct Registry<T> {
     entries: Vec<Option<T>>
